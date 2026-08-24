@@ -4,5 +4,6 @@ compatibility_date = "2026-08-24"
 
 [vars]
 OPENAI_MODEL = "gpt-5-mini"
-# Set this to your GitHub Pages origin after the first deployment, e.g.
-# ALLOWED_ORIGIN = "https://yaswanthraja45.github.io"
+# After the GitHub Pages site is live, set this to its exact origin.
+# Example: ALLOWED_ORIGIN = "https://yaswanthraja45.github.io"
+ALLOWED_ORIGIN = "*"
