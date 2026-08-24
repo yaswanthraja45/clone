@@ -2,8 +2,10 @@ name = "boolean-logic-ai"
 main = "index.ts"
 compatibility_date = "2026-08-24"
 
+[ai]
+binding = "AI"
+
 [vars]
-OPENAI_MODEL = "gpt-5-mini"
-# After the GitHub Pages site is live, set this to its exact origin.
-# Example: ALLOWED_ORIGIN = "https://yaswanthraja45.github.io"
+# Set this to the exact GitHub Pages origin after deployment.
+# Example: ALLOWED_ORIGIN = "https://yaswanthra45.github.io"
 ALLOWED_ORIGIN = "*"
