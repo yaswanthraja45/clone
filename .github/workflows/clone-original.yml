@@ -1,0 +1,32 @@
+name: Clone Original Project
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout clone repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy original repository
+        run: |
+          git clone --depth 1 https://github.com/yaswanthraja45/boolean-logic-simplifier.git /tmp/original
+          rsync -a --delete --exclude='.git' --exclude='.github/workflows/clone-original.yml' /tmp/original/ ./
+
+      - name: Commit cloned project
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Clone original Boolean Logic Simplifier" || exit 0
+          git push origin main
