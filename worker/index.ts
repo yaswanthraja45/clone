@@ -32,36 +32,39 @@ function corsHeaders(origin: string, allowed: string) {
   };
 }
 
-function extractText(result: unknown): string {
+function extractText(result: unknown, depth = 0): string {
+  if (depth > 8 || result == null) return '';
   if (typeof result === 'string') return result.trim();
-  if (result == null) return '';
+  if (typeof result !== 'object') return '';
 
   if (Array.isArray(result)) {
     for (const item of result) {
-      const text = extractText(item);
+      const text = extractText(item, depth + 1);
       if (text) return text;
     }
     return '';
   }
 
-  if (typeof result !== 'object') return '';
   const value = result as Record<string, unknown>;
 
-  // Workers AI text-generation responses normally use `response`.
-  for (const key of ['response', 'text', 'content', 'output_text']) {
-    const text = extractText(value[key]);
-    if (text) return text;
+  // Known Workers AI / chat-completions response fields.
+  const preferredKeys = [
+    'response', 'text', 'content', 'output_text', 'generated_text',
+    'generatedText', 'answer', 'completion', 'output', 'message', 'choices',
+    'result', 'data',
+  ];
+
+  for (const key of preferredKeys) {
+    if (key in value) {
+      const text = extractText(value[key], depth + 1);
+      if (text) return text;
+    }
   }
 
-  // OpenAI-compatible response shape.
-  if (Array.isArray(value.choices)) {
-    const text = extractText(value.choices);
-    if (text) return text;
-  }
-
-  // Some responses wrap the generated message one level deeper.
-  if (value.message) {
-    const text = extractText(value.message);
+  // Last-resort recursive search for wrappers added by the runtime/API.
+  for (const [key, child] of Object.entries(value)) {
+    if (key === 'reasoning' || key === 'reasoning_content') continue;
+    const text = extractText(child, depth + 1);
     if (text) return text;
   }
 
@@ -121,7 +124,7 @@ export default {
       const text = extractText(result);
       if (!text) {
         console.error('Unexpected Workers AI response:', JSON.stringify(result));
-        return Response.json({ error: 'The AI model returned an empty response. Please try the image again.' }, { status: 502, headers });
+        return Response.json({ error: 'The AI model returned an empty response. Please try again.' }, { status: 502, headers });
       }
 
       return Response.json({ text, model: MODEL, free: true }, { headers });
