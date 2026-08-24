@@ -7,7 +7,7 @@ const MODEL = '@cf/google/gemma-4-26b-a4b-it';
 
 const SYSTEM_PROMPT = `You are the AI tutor inside a Boolean Logic Simplifier and Digital Logic Toolkit.
 Help with Boolean algebra, truth tables, K-maps, SOP/POS, minterms/maxterms, Quine-McCluskey, logic gates, digital circuits, electronics, mathematics, programming, and general technical questions.
-Explain clearly and step-by-step when useful. When a user uploads a question image, inspect it carefully before answering.
+Explain clearly and step-by-step when useful. When a user uploads a question image, inspect the image carefully, identify the exact question, and solve it rather than merely describing the image.
 If the user asks for a short answer, keep it short. If they ask for detailed teaching, teach patiently.
 
 IMPORTANT FORMATTING RULES:
@@ -33,17 +33,38 @@ function corsHeaders(origin: string, allowed: string) {
 }
 
 function extractText(result: unknown): string {
-  if (typeof result === 'string') return result;
-  if (result && typeof result === 'object') {
-    const value = result as Record<string, unknown>;
-    if (typeof value.response === 'string') return value.response;
-    if (typeof value.text === 'string') return value.text;
-    if (Array.isArray(value.choices)) {
-      const choice = value.choices[0] as Record<string, unknown> | undefined;
-      const message = choice?.message as Record<string, unknown> | undefined;
-      if (typeof message?.content === 'string') return message.content;
+  if (typeof result === 'string') return result.trim();
+  if (result == null) return '';
+
+  if (Array.isArray(result)) {
+    for (const item of result) {
+      const text = extractText(item);
+      if (text) return text;
     }
+    return '';
   }
+
+  if (typeof result !== 'object') return '';
+  const value = result as Record<string, unknown>;
+
+  // Workers AI text-generation responses normally use `response`.
+  for (const key of ['response', 'text', 'content', 'output_text']) {
+    const text = extractText(value[key]);
+    if (text) return text;
+  }
+
+  // OpenAI-compatible response shape.
+  if (Array.isArray(value.choices)) {
+    const text = extractText(value.choices);
+    if (text) return text;
+  }
+
+  // Some responses wrap the generated message one level deeper.
+  if (value.message) {
+    const text = extractText(value.message);
+    if (text) return text;
+  }
+
   return '';
 }
 
@@ -74,7 +95,7 @@ export default {
 
       const userContent: Array<Record<string, unknown>> = [{
         type: 'text',
-        text: message || 'Analyze the uploaded question and explain it step by step.',
+        text: message || 'Analyze the uploaded question image carefully and solve the question step by step. Give the final answer clearly.',
       }];
 
       if (attachment?.data) {
@@ -99,13 +120,13 @@ export default {
 
       const text = extractText(result);
       if (!text) {
-        console.error('Unexpected Workers AI response:', result);
-        return Response.json({ error: 'The AI model returned an empty response.' }, { status: 502, headers });
+        console.error('Unexpected Workers AI response:', JSON.stringify(result));
+        return Response.json({ error: 'The AI model returned an empty response. Please try the image again.' }, { status: 502, headers });
       }
 
       return Response.json({ text, model: MODEL, free: true }, { headers });
     } catch (error) {
-      console.error(error);
+      console.error('AI request failed:', error);
       return Response.json({ error: 'The free AI service could not process this request. Please try again.' }, { status: 500, headers });
     }
   },
