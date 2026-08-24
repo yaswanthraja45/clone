@@ -1,3 +1,5 @@
 # Boolean Logic Simplifier — AI Development Clone
 
-Development clone of `boolean-logic-simplifier`. The original repository remains untouched.
+This repository is a development clone of `yaswanthraja45/boolean-logic-simplifier`.
+
+The original repository is kept untouched. All AI Assistant development will happen here.
