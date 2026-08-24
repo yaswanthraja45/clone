@@ -9,14 +9,11 @@ let busy = false;
 const style = document.createElement('style');
 style.textContent = `
 #ai-launcher{position:fixed;right:24px;bottom:24px;z-index:9998;border:1px solid rgba(34,211,238,.35);background:linear-gradient(135deg,#0e7490,#164e63);color:#fff;border-radius:999px;padding:13px 18px;font:600 14px Inter,system-ui,sans-serif;box-shadow:0 18px 45px rgba(0,0,0,.35);cursor:pointer}
-#ai-panel{position:fixed;right:24px;bottom:82px;width:min(520px,calc(100vw - 32px));height:min(720px,calc(100vh - 110px));z-index:9999;display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(148,163,184,.18);border-radius:24px;background:rgba(7,17,31,.98);color:#e7eef9;box-shadow:0 24px 80px rgba(0,0,0,.5);font:14px Inter,system-ui,sans-serif;backdrop-filter:blur(18px)}
-#ai-panel.open{display:flex}
-#ai-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.72)}
-#ai-head strong{font-size:16px}.ai-sub{margin-top:3px;color:#64748b;font-size:11px}#ai-close{border:0;background:transparent;color:#94a3b8;font-size:22px;cursor:pointer}
-#ai-messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.ai-msg{max-width:94%;padding:12px 14px;border-radius:16px;line-height:1.6;overflow-wrap:anywhere}.ai-user{align-self:flex-end;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.18);white-space:pre-wrap}.ai-assistant{align-self:flex-start;background:rgba(30,41,59,.7);border:1px solid rgba(148,163,184,.12)}
-.ai-content{font-size:14px}.ai-content p{margin:0 0 10px}.ai-content p:last-child{margin-bottom:0}.ai-content h1,.ai-content h2,.ai-content h3{margin:16px 0 8px;line-height:1.3;color:#f1f5f9}.ai-content h1{font-size:19px}.ai-content h2{font-size:17px}.ai-content h3{font-size:15px}.ai-content strong{color:#f8fafc}.ai-content em{color:#cbd5e1}.ai-content ul,.ai-content ol{margin:7px 0 12px;padding-left:22px}.ai-content li{margin:4px 0}.ai-content code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:#0b1220;border:1px solid #263449;border-radius:6px;padding:2px 5px;color:#67e8f9}.ai-content pre{margin:10px 0;padding:12px;overflow:auto;border-radius:10px;background:#020617;border:1px solid #263449}.ai-content pre code{padding:0;border:0;background:transparent;color:#e2e8f0}.ai-content blockquote{margin:10px 0;padding:8px 12px;border-left:3px solid #22d3ee;background:rgba(34,211,238,.05);color:#cbd5e1}.ai-content hr{border:0;border-top:1px solid #334155;margin:15px 0}
-.ai-table-wrap{width:100%;overflow-x:auto;margin:10px 0 13px;border:1px solid #334155;border-radius:10px}.ai-table{width:100%;min-width:300px;border-collapse:collapse;font-size:12.5px;background:#0b1424}.ai-table th{background:#172338;color:#f8fafc;font-weight:700;text-align:left}.ai-table th,.ai-table td{padding:8px 10px;border-bottom:1px solid #263449;border-right:1px solid #263449;white-space:nowrap}.ai-table tr:last-child td{border-bottom:0}.ai-table th:last-child,.ai-table td:last-child{border-right:0}.ai-table tr:nth-child(even) td{background:rgba(15,23,42,.45)}
+#ai-panel{position:fixed;right:24px;bottom:82px;width:min(560px,calc(100vw - 32px));height:min(740px,calc(100vh - 110px));z-index:9999;display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(148,163,184,.18);border-radius:24px;background:rgba(7,17,31,.98);color:#e7eef9;box-shadow:0 24px 80px rgba(0,0,0,.5);font:14px Inter,system-ui,sans-serif;backdrop-filter:blur(18px)}
+#ai-panel.open{display:flex}#ai-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.72)}#ai-head strong{font-size:16px}.ai-sub{margin-top:3px;color:#64748b;font-size:11px}#ai-close{border:0;background:transparent;color:#94a3b8;font-size:22px;cursor:pointer}
+#ai-messages{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px}.ai-msg{max-width:96%;padding:13px 15px;border-radius:16px;line-height:1.65;overflow-wrap:anywhere}.ai-user{align-self:flex-end;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.18);white-space:pre-wrap}.ai-assistant{align-self:flex-start;background:rgba(30,41,59,.7);border:1px solid rgba(148,163,184,.12)}
+.ai-content{font-size:14px}.ai-content p{margin:0 0 12px}.ai-content p:last-child{margin-bottom:0}.ai-content h1,.ai-content h2,.ai-content h3{margin:18px 0 9px;line-height:1.3;color:#f8fafc}.ai-content h1{font-size:20px}.ai-content h2{font-size:18px}.ai-content h3{font-size:16px}.ai-content strong{color:#f8fafc}.ai-content em{color:#cbd5e1}.ai-content ul,.ai-content ol{margin:8px 0 14px;padding-left:24px}.ai-content li{margin:5px 0}.ai-content code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;background:#0b1220;border:1px solid #263449;border-radius:6px;padding:2px 5px;color:#67e8f9}.ai-content pre{margin:12px 0;padding:13px;overflow:auto;border-radius:10px;background:#020617;border:1px solid #263449}.ai-content pre code{padding:0;border:0;background:transparent;color:#e2e8f0}.ai-content blockquote{margin:11px 0;padding:9px 13px;border-left:3px solid #22d3ee;background:rgba(34,211,238,.05);color:#cbd5e1}.ai-content hr{border:0;border-top:1px solid #334155;margin:17px 0}
+.ai-table-wrap{width:100%;overflow-x:auto;margin:12px 0 15px;border:1px solid #334155;border-radius:12px}.ai-table{width:100%;min-width:360px;border-collapse:separate;border-spacing:0;font-size:12.5px;background:#0b1424}.ai-table th{background:#172338;color:#f8fafc;font-weight:700;text-align:left}.ai-table th,.ai-table td{padding:9px 11px;border-bottom:1px solid #263449;border-right:1px solid #263449;vertical-align:top}.ai-table th:last-child,.ai-table td:last-child{border-right:0}.ai-table tr:last-child td{border-bottom:0}.ai-table tr:nth-child(even) td{background:rgba(15,23,42,.45)}.ai-table th:first-child{border-top-left-radius:11px}.ai-table th:last-child{border-top-right-radius:11px}
 .ai-math{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#a5f3fc;background:rgba(34,211,238,.06);border-radius:5px;padding:1px 5px}.ai-file{margin-top:7px;color:#67e8f9;font-size:11px}
 #ai-attachment{display:none;padding:8px 14px;border-top:1px solid rgba(148,163,184,.1);color:#94a3b8;font-size:11px}#ai-compose{padding:10px;border-top:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.6)}#ai-input-row{display:flex;gap:8px;align-items:flex-end}#ai-input{flex:1;resize:none;min-height:46px;max-height:130px;border:1px solid #334155;border-radius:14px;background:#020617;color:#e2e8f0;padding:12px;outline:none;font:14px inherit}#ai-input:focus{border-color:#22d3ee}.ai-btn{height:44px;min-width:44px;border-radius:12px;border:1px solid #334155;background:#0f172a;color:#cbd5e1;cursor:pointer}.ai-btn:hover{border-color:#22d3ee;color:#67e8f9}.ai-btn:disabled{opacity:.45;cursor:not-allowed}#ai-send{background:#0891b2;border-color:#0891b2;color:white;font-weight:700}#ai-hint{padding:7px 3px 2px;color:#475569;font-size:10px}`;
 document.head.appendChild(style);
@@ -26,8 +23,9 @@ const panel = document.createElement('section'); panel.id='ai-panel'; panel.inne
 const messagesEl=panel.querySelector<HTMLDivElement>('#ai-messages')!; const input=panel.querySelector<HTMLTextAreaElement>('#ai-input')!; const send=panel.querySelector<HTMLButtonElement>('#ai-send')!; const upload=panel.querySelector<HTMLButtonElement>('#ai-upload')!; const fileInput=panel.querySelector<HTMLInputElement>('#ai-file-input')!; const attachmentEl=panel.querySelector<HTMLDivElement>('#ai-attachment')!;
 
 function escapeHtml(value:string){return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function cleanMarkdown(value:string){return value.replace(/\\([|*_#`$])/g,'$1').replace(/\\r/g,'').replace(/\\n/g,'\n')}
 function inlineMarkdown(value:string){
-  let s=escapeHtml(value);
+  let s=escapeHtml(cleanMarkdown(value));
   s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
   s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
   s=s.replace(/__([^_]+)__/g,'<strong>$1</strong>');
@@ -36,11 +34,21 @@ function inlineMarkdown(value:string){
   s=s.replace(/\$([^$\n]+)\$/g,'<span class="ai-math">$1</span>');
   return s;
 }
-function isTableSeparator(line:string){return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line)}
-function tableCells(line:string){let s=line.trim();if(s.startsWith('|'))s=s.slice(1);if(s.endsWith('|'))s=s.slice(0,-1);return s.split('|').map(x=>x.trim())}
+function tableCells(line:string){
+  let s=cleanMarkdown(line).trim();
+  if(s.startsWith('|'))s=s.slice(1);if(s.endsWith('|'))s=s.slice(0,-1);
+  return s.split('|').map(x=>x.trim());
+}
+function isTableSeparator(line:string){
+  const cells=tableCells(line);
+  return cells.length>=2 && cells.every(cell=>/^:?-{2,}:?$/.test(cell));
+}
+function looksLikeTable(line:string,next:string){
+  return line.includes('|') && isTableSeparator(next);
+}
 function renderTable(lines:string[]){
   const head=tableCells(lines[0]);
-  const rows=lines.slice(2).map(tableCells);
+  const rows=lines.slice(2).map(tableCells).filter(row=>row.length);
   let html='<div class="ai-table-wrap"><table class="ai-table"><thead><tr>';
   html+=head.map(c=>`<th>${inlineMarkdown(c)}</th>`).join('');
   html+='</tr></thead><tbody>';
@@ -48,7 +56,7 @@ function renderTable(lines:string[]){
   return html+'</tbody></table></div>';
 }
 function renderMarkdown(markdown:string){
-  const lines=markdown.replace(/\r/g,'').split('\n');
+  const lines=cleanMarkdown(markdown).split('\n');
   const out:string[]=[]; let paragraph:string[]=[]; let listType:''|'ul'|'ol'=''; let inCode=false; let code:string[]=[];
   const flushParagraph=()=>{if(paragraph.length){out.push(`<p>${inlineMarkdown(paragraph.join('\n')).replace(/\n/g,'<br>')}</p>`);paragraph=[]}};
   const closeList=()=>{if(listType){out.push(listType==='ul'?'</ul>':'</ol>');listType=''}};
@@ -56,8 +64,8 @@ function renderMarkdown(markdown:string){
     const line=lines[i];
     if(line.trim().startsWith('```')){if(inCode){out.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`);code=[];inCode=false}else{flushParagraph();closeList();inCode=true}continue}
     if(inCode){code.push(line);continue}
-    if(i+1<lines.length && line.includes('|') && isTableSeparator(lines[i+1])){flushParagraph();closeList();const table=[line,lines[i+1]];i+=2;while(i<lines.length&&lines[i].includes('|')&&lines[i].trim())table.push(lines[i++]);i--;out.push(renderTable(table));continue}
-    if(/^#{1,3}\s+/.test(line)){flushParagraph();closeList();const m=line.match(/^(#{1,3})\s+(.+)$/)!;const level=m[1].length;out.push(`<h${level}>${inlineMarkdown(m[2])}</h${level}>`);continue}
+    if(i+1<lines.length && looksLikeTable(line,lines[i+1])){flushParagraph();closeList();const table=[line,lines[i+1]];i+=2;while(i<lines.length&&lines[i].includes('|')&&lines[i].trim()){table.push(lines[i++])}i--;out.push(renderTable(table));continue}
+    const heading=line.match(/^\s*(#{1,3})\s+(.+)$/);if(heading){flushParagraph();closeList();const level=heading[1].length;out.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);continue}
     if(/^\s*([-*_])(?:\s*\1){2,}\s*$/.test(line)){flushParagraph();closeList();out.push('<hr>');continue}
     const ul=line.match(/^\s*[-*+]\s+(.+)$/); const ol=line.match(/^\s*\d+[.)]\s+(.+)$/);
     if(ul||ol){flushParagraph();const wanted=ul?'ul':'ol';if(listType!==wanted){closeList();out.push(`<${wanted}>`);listType=wanted}out.push(`<li>${inlineMarkdown((ul||ol)![1])}</li>`);continue}
